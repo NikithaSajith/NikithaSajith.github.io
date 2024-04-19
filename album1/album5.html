@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kpop Idol Photo Album</title>
+  <!-- Link Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Custom CSS for spacing */
+    .image-container {
+      padding: 10px;
+    }
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .image-grid .image-item {
+      width: 100%;
+      height: auto;
+      max-width: 200px; /* Fixed width for images */
+      max-height: 200px; /* Fixed height for images */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">Kpop Idol Photo Album</h1>
+
+    <!-- Buttons for image processing operations -->
+    <div class="btn-grid mb-3">
+      <button class="btn btn-primary" onclick="makeReddish()">Make Reddish</button>
+      <button class="btn btn-primary" onclick="makeBlueish()">Make Blueish</button>
+      <button class="btn btn-primary" onclick="makeGreenish()">Make Greenish</button>
+      <button class="btn btn-primary" onclick="duplicateImage()">Duplicate Image</button>
+      <button class="btn btn-primary" onclick="increaseBrightness()">Increase Brightness</button>
+      <button class="btn btn-primary" onclick="reduceResolution()">Reduce Resolution</button>
+      <button class="btn btn-primary" onclick="createAvatar()">Create Avatar</button>
+      <button class="btn btn-primary" onclick="convertToGray()">Convert to Grayscale</button>
+      <button class="btn btn-primary" onclick="generateQRCode()">Generate QR Code</button>
+    </div>
+
+    <!-- Grid layout using Bootstrap -->
+    <div class="row" id="imageRow">
+      <!-- Images will be dynamically loaded here -->
+    </div>
+
+  </div>
+
+  <!-- Link Bootstrap JS (Optional, if you need JavaScript features) -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- CamanJS library for image processing -->
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+
+
+  <!-- QRCodeJS library for QR code generation -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/qrcode.min.js"></script>
+  <script src="proess.js"></script>
+  <!-- JavaScript for image processing operations -->
+  
+</body>
+</html>

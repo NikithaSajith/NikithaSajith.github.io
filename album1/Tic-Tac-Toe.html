@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            border: 1px solid black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        button {
+            margin-top: 10px;
+            font-size: 1em;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+    <div id="game-board"></div>
+    <div id="message"></div>
+    <button id="single-player">Single Player</button>
+    <button id="two-players">Two Players</button>
+    <button id="undo">Undo</button>
+
+    <script>
+        // JavaScript code for game logic and user interface
+        const board = document.getElementById('game-board');
+        const message = document.getElementById('message');
+        const singlePlayerBtn = document.getElementById('single-player');
+        const twoPlayersBtn = document.getElementById('two-players');
+        const undoBtn = document.getElementById('undo');
+        const cells = [];
+
+        let currentPlayer = 'X';
+        let gameMode = '';
+
+        // Initialize game board
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.row = i;
+                cell.dataset.col = j;
+                cell.addEventListener('click', handleCellClick);
+                cells.push(cell);
+                board.appendChild(cell);
+            }
+        }
+
+        // // Event listener for game mode selection
+        // singlePlayerBtn.addEventListener('click', () => {
+        //     gameMode = 'single-player';
+        //     startGame();
+        // });
+
+        twoPlayersBtn.addEventListener('click', () => {
+            gameMode = 'two-players';
+            startGame();
+        });
+
+        // Event listener for undo button
+        undoBtn.addEventListener('click', undoMove);
+
+        // Function to start the game
+        function startGame() {
+            currentPlayer = 'X';
+            message.textContent = `Player ${currentPlayer}'s turn`;
+            cells.forEach(cell => cell.textContent = '');
+        }
+
+        // Function to handle cell click
+        function handleCellClick(event) {
+            const cell = event.target;
+            if (cell.textContent === '' && !checkWinner()) {
+                cell.textContent = currentPlayer;
+                if (checkWinner()) {
+                    message.textContent = `Player ${currentPlayer} wins!`;
+                } else if (checkDraw()) {
+                    message.textContent = "It's a draw!";
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    message.textContent = `Player ${currentPlayer}'s turn`;
+                }
+            }
+        }
+
+        // Function to check for a winner
+        function checkWinner() {
+            const winningCombinations = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            for (const combo of winningCombinations) {
+                const [a, b, c] = combo;
+                if (cells[a].textContent && cells[a].textContent === cells[b].textContent && cells[a].textContent === cells[c].textContent) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Function to check for a draw
+        function checkDraw() {
+            return cells.every(cell => cell.textContent !== '');
+        }
+
+        // Function to undo the last move
+        function undoMove() {
+            if (gameMode === 'two-players') {
+                const lastMove = cells.filter(cell => cell.textContent !== '').pop();
+                if (lastMove) {
+                    lastMove.textContent = '';
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    message.textContent = `Player ${currentPlayer}'s turn`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

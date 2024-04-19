@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taara Baby Photo Album</title>
+  <!-- Link Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Custom CSS for spacing */
+    .image-container {
+      padding: 10px;
+    }
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .image-grid .image-item {
+      width: 100%;
+      height: auto;
+      max-width: 200px; /* Fixed width for images */
+      max-height: 200px; /* Fixed height for images */
+    }
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">Taara Baby Photo Album</h1>
+
+    <!-- Buttons for image processing operations -->
+    <div class="btn-grid mb-3">
+      <button class="btn btn-primary" onclick="makeReddish()">Make Reddish</button>
+      <button class="btn btn-primary" onclick="makeBlueish()">Make Blueish</button>
+      <button class="btn btn-primary" onclick="makeGreenish()">Make Greenish</button>
+      <button class="btn btn-primary" onclick="duplicateImage()">Duplicate Image</button>
+      <!-- <button class="btn btn-primary" onclick="increaseBrightness()">Increase Brightness</button> -->
+      <!-- <button class="btn btn-primary" onclick="reduceResolution()">Reduce Resolution</button> -->
+      <button class="btn btn-primary" onclick="createAvatar()">Create Avatar</button>
+      <button class="btn btn-primary" onclick="convertToGray()">Convert to Grayscale</button>
+      <!-- <button class="btn btn-primary" onclick="generateQRCode()">Generate QR Code</button> -->
+    </div>
+
+    <!-- Grid layout using Bootstrap -->
+    <div class="row" id="imageRow">
+      <!-- Images will be dynamically loaded here -->
+      <div class="col-sm-4">
+        <img class="img-fluid" src="./image1.jpeg">
+      </div>
+      <div class="col-sm-4">
+        <img class="img-fluid" src="./image2.jpeg">
+      </div>
+      <div class="col-sm-4">
+        <img class="img-fluid" src="./image3.jpeg">
+      </div>
+    </div>
+    <div class="row" id="imageRow">
+      <div class="col-sm-4">
+        <img class="img-fluid" src="./image4.jpeg">
+      </div>
+      <div class="col-sm-4">
+        <img class="img-fluid" src="./image5.jpeg">
+      </div>
+      <div class="col-sm-4">
+        <img class="img-fluid" src="./image6.jpeg">
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Link Bootstrap JS (Optional, if you need JavaScript features) -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- JavaScript for image processing operations -->
+  <script>
+    // Function to load images into the grid
+    /*function loadImages() {
+      var imageRow = document.getElementById('imageRow');
+      imageRow.innerHTML = ''; // Clear previous images
+
+      // Add your image paths here
+      var imagePaths = ["image1.jpeg", "image2.jpeg", "image3.jpeg","image4.jpeg", "image5.jpeg", "image6.jpeg"];
+
+      // Loop through each image path and create image elements
+      imagePaths.forEach(function(path) {
+        var imageContainer = document.createElement('div');
+        imageContainer.className = 'col-md-4 image-container';
+
+        var img = document.createElement('img');
+        img.src = path;
+        img.className = 'img-fluid';
+        img.alt = 'Kpop Idol';
+        
+        imageContainer.appendChild(img);
+        imageRow.appendChild(imageContainer);
+      });
+    }
+
+    // Call loadImages function when the page loads
+    window.onload = function() {
+      loadImages();
+    }*/
+
+    // Function to make an image reddish
+    function makeReddish() {
+      var images = document.querySelectorAll('.img-fluid');
+      images.forEach(function(img) {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var data = imageData.data;
+
+        for (var i = 0; i < data.length; i += 4) {
+          var r = data[i];
+          var g = data[i + 1];
+          var b = data[i + 2];
+
+          if (r <= g + b) {
+            data[i] = g + b;
+            data[i + 1] = 0;
+            data[i + 2] = 0;
+          }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        img.src = canvas.toDataURL();
+      });
+    }
+
+    // Function to make an image blueish
+    function makeBlueish() {
+      var images = document.querySelectorAll('img');
+      images.forEach(function(img) {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var data = imageData.data;
+
+        for (var i = 0; i < data.length; i += 4) {
+          var r = data[i];
+          var g = data[i + 1];
+          var b = data[i + 2];
+
+          if (b <= r + g) {
+            data[i] = 0;
+            data[i + 1] = 0;
+            data[i + 2] = r + g;
+          }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        img.src = canvas.toDataURL();
+      });
+    }
+
+    // Function to make an image greenish
+    function makeGreenish() {
+      var images = document.querySelectorAll('.img-fluid');
+      images.forEach(function(img) {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var data = imageData.data;
+
+        for (var i = 0; i < data.length; i += 4) {
+          var r = data[i];
+          var g = data[i + 1];
+          var b = data[i + 2];
+
+          if (g <= r + b) {
+            data[i] = 0;
+            data[i + 1] = r + b;
+            data[i + 2] = 0;
+          }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        img.src = canvas.toDataURL();
+      });
+    }
+
+    // Function to duplicate an image
+    function duplicateImage() {
+      var images = document.querySelectorAll('.img-fluid');
+      images.forEach(function(img) {
+        var duplicate = img.cloneNode(true);
+        duplicate.alt = 'Duplicate Kpop Idol';
+        img.parentNode.appendChild(duplicate);
+      });
+    }
+
+    // Function to increase brightness of an image
+    function increaseBrightness() {
+      var images = document.querySelectorAll('.img-fluid');
+      images.forEach(function(img) {
+        Caman(img, function () {
+          this.brightness(20).render();
+        });
+      });
+    }
+
+    // Function to reduce resolution of an image
+    function reduceResolution() {
+      var images = document.querySelectorAll('.img-fluid');
+      images.forEach(function(img) {
+        Caman(img, function () {
+          this.resize({ width: img.width / 2, height: img.height / 2 }).render();
+        });
+      });
+    }
+
+    // Function to create an avatar from an image
+    function createAvatar() {
+      var images = document.querySelectorAll('.img-fluid');
+      images.forEach(function(img) {
+        var canvas = document.createElement('canvas');
+        canvas.width = 100; // Avatar width
+        canvas.height = 100; // Avatar height
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        img.src = canvas.toDataURL();
+      });
+    }
+
+    // Function to convert an image to grayscale
+    function convertToGray() {
+      var images = document.querySelectorAll('.img-fluid');
+      images.forEach(function(img) {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var data = imageData.data;
+
+        for (var i = 0; i < data.length; i += 4) {
+          var avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+          data[i] = avg;
+          data[i + 1] = avg;
+          data[i + 2] = avg;
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        img.src = canvas.toDataURL();
+      });
+    }
+
+    // Function to generate QR code from an image
+    function generateQRCode() {
+      var images = document.querySelectorAll('.img-fluid');
+      images.forEach(function(img) {
+        var url = img.src;
+        var qrCode = new QRCode(document.createElement("div"), {
+          text: url,
+          width: 200,
+          height: 200,
+        });
+        var imgQR = qrCode._el.firstChild;
+        img.parentNode.appendChild(imgQR);
+      });
+    }
+  </script>
+</body>
+</html>

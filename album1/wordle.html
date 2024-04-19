@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wordle Clone</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+    .wordle-container {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      margin-top: 0;
+      color: #333;
+      text-align: center;
+    }
+    .board {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+    }
+    .letter {
+      width: 40px;
+      height: 40px;
+      margin: 2px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.2em;
+      text-transform: uppercase;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .letter.correct {
+      background-color: #6aaa64; /* Green for correct letter in correct position */
+    }
+    .letter.present {
+      background-color: #c9b47e; /* Yellow for correct letter in wrong position */
+    }
+    .letter.absent {
+      background-color: #787c7e; /* Grey for wrong letter */
+    }
+    .keyboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .keyboard-btn {
+      width: 40px;
+      height: 40px;
+      margin: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    .keyboard-btn:hover {
+      background-color: #ddd;
+    }
+    .keyboard-btn.used {
+      background-color: #ccc;
+      cursor: default; /* Disable clicking on used letters */
+    }
+  </style>
+</head>
+<body>
+  <div class="wordle-container">
+    <h1>Wordle Clone</h1>
+    <div class="board"></div>
+    <div class="keyboard"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <script>
+  const words = ["...put a large list of 5-letter words here..."]; // Replace with a large word list
+  let targetWord = "";
+  let currentRow = 0;
+  let gameOver = false;
+
+  function initializeGame() {
+    targetWord = words[Math.floor(Math.random() * words.length)];
+    currentRow = 0;
+    gameOver = false;
+    document.getElementById('feedback').innerText = "";
+    createLetterBoxes();
+    createKeyboard();
+  }
+
+  function createLetterBoxes() {
+    const board = document.querySelector('.board');
+    board.innerHTML = ""; // Clear previous rows
+    for (let i = 0; i < 6; i++) {
+      const row = document.createElement('div');
+      row.classList.add('row');
+      for (let j = 0; j < 5; j++) {
+        const letterBox = document.createElement('div');
+        letterBox.classList.add('letter');
+        row.appendChild(letterBox);
+      }
+      board.appendChild(row);
+    }
+  }
+
+  function createKeyboard() {
+    const keyboard = document.querySelector('.keyboard');
+    keyboard.innerHTML = "";
+    const keys = [
+        'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
+        'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
+        'Z', 'X', 'C', 'V', 'B', 'N', 'M', '{ENTER}'
+    ];
+    keys.forEach(key => {
+        const btn = document.createElement('button');
+        btn.classList.add('keyboard-btn');
+        btn.innerText = key;
+        btn.addEventListener('click', () => handleKeyClick(key));
+        keyboard.appendChild(btn);
+    });
+}
+
+  function handleKeyClick(key) {
+    if (gameOver) return;
+    if (key === '{ENTER}') {
+      checkGuess();
+    } else if (key === 'X') {
+      const letterBox = document.querySelector(`.row:nth-child(${currentRow + 1}) .letter:last-child`);
+      if (letterBox) {
+        letterBox.innerText = '';
+      }
+    } else if (letterBox.innerText.length < 5) {
+      const letterBox = document.querySelector(`.row:nth-child(${currentRow + 1}) .letter:empty`);
+      if (letterBox) {
+        letterBox.innerText = key.toUpperCase();
+      }
+    }
+  }
+
+  function checkGuess() {
+    const guess = document.querySelector(`.row:nth-child(${currentRow + 1})`).innerText.toLowerCase();
+    if (!validateGuess(guess)) {
+      alert("Please enter a valid 5-letter word with no repeated letters.");
+      return;
+    }
+    const feedback = getFeedback(guess);
+    colorKeyBoard(guess);
+    updateLetterBoxes(feedback);
+    currentRow++;
+    if (feedback === "You win!" || currentRow === 6) {
+      gameOver = true;
+      if (feedback === "You win!") {
+        alert(`Congratulations! You guessed the word "${targetWord}" in ${currentRow} guesses.`);
+      } else {
+        alert(`You lose! The word was: "${targetWord}"`);
+      }
+    }
+  }
+
+  function validateGuess(guess) {
+    return /^[a-z]{5}$/i.test(guess) && new Set(guess).size === guess.length;
+  }
+
+  function getFeedback(guess) {
+    if (guess === targetWord) {
+      return "You win!";
+    }
+    let feedback = "";
+    for (let i = 0; i < guess.length; i++) {
+      if (guess[i] === targetWord[i]) {
+        feedback += "●";
+      } else if (targetWord.includes(guess[i])) {
+        feedback += "○";
+      } else {
+        feedback += "◻";
+      }
+    }
+    return feedback;
+  }
+
+  function updateLetterBoxes(feedback) {
+    const letters = document.querySelectorAll(`.row:nth-child(${currentRow + 1}) .letter`);
+    for (let i = 0; i < letters.length; i++) {
+      letters[i].classList.add(feedback[i] === "●" ? 'correct' : feedback[i] === "○" ? 'present' : 'absent');
+    }
+  }
+
+  function colorKeyBoard(guess) {
+    for (let key of guess) {
+      const btn = document.querySelector(`.keyboard-btn:nth-child(${key.charCodeAt(0) - 64})`);
+      if (btn.classList.contains('correct') || btn.classList.contains('present')) {
+        btn.classList.add('used');
+      } else {
+        btn.classList.add('absent');
+      }
+    }
+  }
+
+  initializeGame();
+  </script>
+</body>
+</html>

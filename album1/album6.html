@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing Demo</title>
+    <style>
+        .container {
+            margin-bottom: 20px;
+        }
+        img {
+            max-width: 400px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Processing Demo</h1>
+    
+    <!-- Original Image -->
+    <div class="container">
+        <h2>Original Image</h2>
+        <img id="originalImage" src="C:\Users\HP\OneDrive\Pictures\Photo Album-nature\bird-8615360_640.jpg" alt="Original Image">
+    </div>
+
+    <!-- Buttons to Perform Operations -->
+    <div class="container">
+        <button onclick="duplicateImage()">Duplicate Image</button>
+        <button onclick="increaseBrightness()">Increase Brightness</button>
+        <button onclick="reduceResolution()">Reduce Resolution</button>
+        <button onclick="makeReddish()">Make Reddish</button>
+        <button onclick="generateQRCode()">Generate QR Code</button>
+    </div>
+
+    <!-- Display Processed Images -->
+    <div id="processedImages"></div>
+
+    <script>
+        // Function to duplicate the original image
+        function duplicateImage() {
+            var originalImage = document.getElementById('originalImage');
+            var duplicateImage = originalImage.cloneNode(true);
+            displayProcessedImage(duplicateImage);
+        }
+
+        // Function to increase brightness of the image
+        function increaseBrightness() {
+            var originalImage = document.getElementById('originalImage');
+            var brightenedImage = originalImage.cloneNode(true);
+            brightenedImage.style.filter = 'brightness(150%)'; // Increase brightness by 50%
+            displayProcessedImage(brightenedImage);
+        }
+
+        // Function to reduce resolution of the image
+        function reduceResolution() {
+            var originalImage = document.getElementById('originalImage');
+            var reducedImage = originalImage.cloneNode(true);
+            reducedImage.style.maxWidth = '200px'; // Reduce image resolution
+            displayProcessedImage(reducedImage);
+        }
+
+        // Function to make the image reddish
+        function makeReddish() {
+            var originalImage = document.getElementById('originalImage');
+            var reddishCanvas = document.createElement('canvas');
+            var ctx = reddishCanvas.getContext('2d');
+            reddishCanvas.width = originalImage.width;
+            reddishCanvas.height = originalImage.height;
+            ctx.drawImage(originalImage, 0, 0);
+            var imageData = ctx.getImageData(0, 0, reddishCanvas.width, reddishCanvas.height);
+            var data = imageData.data;
+            for (var i = 0; i < data.length; i += 4) {
+                var r = data[i];
+                var g = data[i + 1];
+                var b = data[i + 2];
+                if (r <= g + b) {
+                    data[i] = g + b;
+                }
+            }
+            ctx.putImageData(imageData, 0, 0);
+            var reddishImage = new Image();
+            reddishImage.src = reddishCanvas.toDataURL();
+            displayProcessedImage(reddishImage);
+        }
+
+        // Function to generate QR code from the image
+        function generateQRCode() {
+            var originalImageSrc = document.getElementById('originalImage').src;
+            var qrCanvas = document.createElement('canvas');
+            qrCanvas.width = qrCanvas.height = 200;
+            var ctx = qrCanvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, qrCanvas.width, qrCanvas.height);
+            var qr = new QRCode(ctx, {
+                width: qrCanvas.width,
+                height: qrCanvas.height
+            });
+            qr.makeCode(originalImageSrc);
+            var qrImage = new Image();
+            qrImage.src = qrCanvas.toDataURL();
+            displayProcessedImage(qrImage);
+        }
+
+        // Function to display processed images
+        function displayProcessedImage(image) {
+            var container = document.createElement('div');
+            container.classList.add('container');
+            container.appendChild(image);
+            var processedImagesDiv = document.getElementById('processedImages');
+            processedImagesDiv.appendChild(container);
+        }
+    </script>
+</body>
+</html>

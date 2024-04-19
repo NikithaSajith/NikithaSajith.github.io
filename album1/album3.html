@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kpop Idol Photo Album</title>
+    <!-- Link Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom CSS for spacing */
+        .image-container {
+            padding: 10px;
+        }
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Kpop Idol Photo Album</h1>
+
+    <!-- Buttons for image processing operations -->
+    <div class="btn-grid mb-3">
+        <button class="btn btn-primary" onclick="uploadImage()">Load Photo1</button>
+        <button class="btn btn-primary" onclick="checkImageColor()">Check Color</button>
+        <button class="btn btn-primary" onclick="makeImageReddish()">Make Reddish</button>
+        <button class="btn btn-primary" onclick="makeImageBlueish()">Make Blueish</button>
+        <button class="btn btn-primary" onclick="makeImageGreenish()">Make Greenish</button>
+        <button class="btn btn-primary" onclick="duplicateImage()">Duplicate Image</button>
+        <button class="btn btn-primary" onclick="increaseBrightness()">Increase Brightness</button>
+        <button class="btn btn-primary" onclick="reduceResolution()">Reduce Resolution</button>
+        <button class="btn btn-primary" onclick="createAvatar()">Create Avatar</button>
+        <button class="btn btn-primary" onclick="convertToGrayscale()">Convert to Grayscale</button>
+        <button class="btn btn-primary" onclick="generateQRCode()">Generate QR Code</button>
+        <button class="btn btn-primary" onclick="filterImages()">Filter Images</button>
+        <button class="btn btn-primary" onclick="createThumbnails()">Create Thumbnails</button>
+    </div>
+
+    <!-- Grid layout using Bootstrap -->
+    <div class="row" id="imageRow">
+        <!-- Images will be dynamically loaded here -->
+    </div>
+
+</div>
+
+<!-- Link Bootstrap JS (Optional, if you need JavaScript features) -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/qrcode.min.js"></script>
+
+<script>
+    var selectedImage = null;
+
+    function uploadImage() {
+    var imageContainer = document.getElementById('imageRow');
+    var img = document.createElement('img');
+    img.src = 'image2.jpeg'; 
+    img.classList.add('img-fluid');
+    img.alt = 'Kpop Idol';
+    imageContainer.innerHTML='';
+    imageContainer.appendChild(img);
+
+    }
+
+    
+
+    function checkImageColor() {
+        var img = document.getElementById('selectedImage');
+        if (!img) {
+            alert('Please load an image first.');
+            return;
+        }
+
+        // Create a canvas element to draw the image
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+        // Get the image data
+        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var pixels = imageData.data;
+        var redCount = 0;
+        var greenCount = 0;
+        var blueCount = 0;
+
+        // Count the number of red, green, and blue pixels
+        for (var i = 0; i < pixels.length; i += 4) {
+            var red = pixels[i];
+            var green = pixels[i + 1];
+            var blue = pixels[i + 2];
+            if (red > green + blue) {
+                redCount++;
+            } else if (green > red + blue) {
+                greenCount++;
+            } else if (blue > red + green) {
+                blueCount++;
+            }
+        }
+
+        // Calculate percentages
+        var totalPixels = pixels.length / 4;
+        var redPercentage = (redCount / totalPixels) * 100;
+        var greenPercentage = (greenCount / totalPixels) * 100;
+        var bluePercentage = (blueCount / totalPixels) * 100;
+
+        // Determine the dominant color
+        var dominantColor;
+        if (redPercentage > 50) {
+            dominantColor = 'Reddish';
+        } else if (greenPercentage > 50) {
+            dominantColor = 'Greenish';
+        } else if (bluePercentage > 50) {
+            dominantColor = 'Blueish';
+        } else {
+            dominantColor = 'None';
+        }
+
+        // Display the result
+        alert('Dominant Color: ' + dominantColor);
+    }
+
+    function makeImageReddish() {
+        var img = document.getElementById('selectedImage');
+        if (!img) {
+            alert('Please load an image first.');
+            return;
+        }
+
+        Caman(img, function () {
+            this.red(50);
+            this.green(-25);
+            this.blue(-25);
+            this.render();
+        });
+    }
+
+    function makeImageBlueish() {
+        var img = document.getElementById('selectedImage');
+        if (!img) {
+            alert('Please load an image first.');
+            return;
+        }
+
+        Caman(img, function () {
+            this.red(-25);
+            this.green(-25);
+            this.blue(50);
+            this.render();
+        });
+    }
+
+    function makeImageGreenish() {
+        var img = document.getElementById('selectedImage');
+        if (!img) {
+            alert('Please load an image first.');
+            return;
+        }
+
+        Caman(img, function () {
+            this.red(-25);
+            this.green(50);
+            this.blue(-25);
+            this.render();
+        });
+    }
+
+    function duplicateImage() {
+        var img = document.getElementById('selectedImage');
+        if (!img) {
+            alert('Please load an image first.');
+            return;
+        }
+
+        var newImg = img.cloneNode(true);
+        document.getElementById('imageContainer').appendChild(newImg);
+    }
+
+    function increaseBrightness() {
+        var img = document.getElementById('selectedImage');
+        if (!img) {
+            alert('Please load an image first.');
+            return;
+        }
+
+        Caman(img, function () {
+            this.brightness(20).render();
+        });
+    }
+
+    function reduceResolution() {
+        var img = document.getElementById('selectedImage');
+        if (!img) {
+            alert('Please load an image first.');
+            return;
+        }
+
+        Caman(img, function () {
+            this.resize({ width: img.width / 2, height: img.height / 2 }).render();
+        });
+    }
+
+    function createAvatar() {
+        var img = document.getElementById('selectedImage');
+        if (!img) {
+            console.error('Image element not found.');
+            return;
+        }
+
+        // Resize the image to avatar size
+        var canvas = document.createElement('canvas');
+        canvas.width = 100; // Avatar width
+        canvas.height = 100; // Avatar height
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        img.src = canvas.toDataURL();
+    }
+
+    function convertToGrayscale() {
+        var img = document.getElementById('selectedImage');
+        if (!img) {
+            console.error('Image element not found.');
+            return;
+        }
+
+        Caman(img, function () {
+            this.greyscale().render();
+        });
+    }
+
+    function generateQRCode() {
+        var url = window.location.href;
+
+        // Create a QRCode object
+        var qrCode = new QRCode(document.getElementById("imageContainer"), {
+            width: 200, // Set the width of the QR code
+            height: 200 // Set the height of the QR code
+        });
+
+        // Generate the QR code with the specified data
+        qrCode.makeCode(url);
+    }
+
+    function filterImages() {
+        var images = document.getElementsByTagName('img');
+        var altText = prompt("Enter alt text to filter images:");
+
+        for (var i = 0; i < images.length; i++) {
+            var img = images[i];
+            if (img.alt.toLowerCase().includes(altText.toLowerCase())) {
+                img.style.display = 'inline-block';
+            } else {
+                img.style.display = 'none';
+            }
+        }
+    }
+
+    function createThumbnails() {
+        var img = document.getElementById('selectedImage');
+        if (!img) {
+            alert('Please load an image first.');
+            return;
+        }
+
+        var canvas = document.createElement('canvas');
+        canvas.width = 100; // Thumbnail width
+        canvas.height = 100; // Thumbnail height
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        img.src = canvas.toDataURL();
+    }
+</script>
+</body>
+</html>
+
